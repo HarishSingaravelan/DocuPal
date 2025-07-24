@@ -58,11 +58,11 @@ if "retriever" in st.session_state:
 
     for chat in st.session_state.chat_history:
         with st.chat_message(chat["role"]):
-            st.markdown(f"<div class='chat-bubble'>{chat['content']}</div>", unsafe_allow_html=True)
+            st.markdown(chat['content'])
 
     if prompt := st.chat_input("Ask something about the PDF..."):
         with st.chat_message("user"):
-            st.markdown(f"<div class='chat-bubble'>{prompt}</div>", unsafe_allow_html=True)
+            st.markdown(prompt)
 
         st.session_state.chat_history.append({"role": "user", "content": prompt})
 
