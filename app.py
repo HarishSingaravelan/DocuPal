@@ -72,14 +72,6 @@ if "retriever" in st.session_state:
             
             answer = ask_ollama(prompt, context)
 
-            full_response = ""
-            message_placeholder = st.empty()
-
-            for chunk in answer.split():
-                full_response += chunk + " "
-                time.sleep(0.04)
-                message_placeholder.markdown(f"{full_response}▌")
-
-            message_placeholder.markdown(full_response)
-
-        st.session_state.chat_history.append({"role": "assistant", "content": full_response})
+        with st.chat_message("assistant"):
+            st.markdown(answer)
+        st.session_state.chat_history.append({"role": "assistant", "content": answer})
