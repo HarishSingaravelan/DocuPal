@@ -4,7 +4,7 @@ set -e
 # Start Ollama server in background
 ollama serve &
 
-# Wait for server to be ready
+# Wait for server to be done
 sleep 5
 
 # Pull models
