@@ -19,3 +19,4 @@ RUN pip install --break-system-packages -r requirements.txt
 
 # Override the default entrypoint set by ollama/ollama
 ENTRYPOINT ["/entrypoint.sh"]
+CMD []
