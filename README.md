@@ -1,4 +1,4 @@
-# 🧠 ChatDoc — Intelligent PDF Assistant using Ollama & Streamlit
+# 🧠 DocuPal — Intelligent PDF Assistant using Ollama & Streamlit
 
 ![ChatDoc Demo](static/ui.gif)
 
