@@ -3,6 +3,12 @@ langchain-community
 langchain-ollama
 langchain-core
 langchain-text-splitters
+langgraph
 chromadb
-streamlit
 pymupdf
+fastapi
+uvicorn
+pydantic
+python-multipart
+streamlit
+requests

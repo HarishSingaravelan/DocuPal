@@ -14,61 +14,6 @@
 - 🔎 Contextual RAG using ChromaDB
 - 💡 Fast and lightweight UI with Streamlit
 
----
-
-## ⚙️ Setup Instructions
-
-### 📦 Option 1: Using Docker (Recommended)
-
-> Docker image includes everything: Ollama + Streamlit + dependencies.
-
-1. **Install Docker**: [Get Docker](https://www.docker.com/products/docker-desktop/)
-
-2. **Clone the Repo**:
-```
-git clone https://github.com/HarishSingaravelan/DocuPal.git
-cd DocuPal
-```
-
-3. **Create the image from Dockerfile**
-```
-docker build -t ollama-chat .
-```
-4. **Create a container with mounted volumes** (to persist Ollama models across runs and avoid re-downloading them each time the container starts)
-
-```
-docker run -v ollama-data:/root/.ollama -p 8501:8501 ollama-chat
-```
-> You can access streamlit via [localhost:8501](http://localhost:8501/)
-
-### ⚒️ Option 2: Manual Setup (No Docker)
-Make sure you have Python 3.9+, Ollama installed locally, and dependencies ready.
-
-1. Install Ollama locally: https://ollama.com
-
-2. Pull a supported model:
-```
-ollama pull llama3.2 mxbai-embed-large
-```
-3. Clone the repo:
-```
-git clone https://github.com/HarishSingaravelan/DocuPal.git
-cd DocuPal
-```
-4. Create and activate a virtual environment:
-```
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-5. Install dependencies:
-```
-pip install -r requirements.txt
-```
-6. Run the Streamlit app:
-```
-streamlit run app.py
-```
-
 ## 🧪 Tech Stack
 - 🧠 Ollama (local LLM inference)
 
@@ -82,31 +27,101 @@ streamlit run app.py
 
 - 📄 PyMuPDF (fitz) for PDF parsing
 
-## 🧱 Project Structure
+## 1. Folder structure
+ 
+Ensure all files are saved in the same folder. Your project directory should look exactly like this:
+ 
 ```
-├── app.py              # Main Streamlit app
-├── rag_utils.py        # PDF parsing & Chroma logic
-├── ollama_chat.py      # Querying Ollama with LangChain
-├── Dockerfile          # Docker config
+/docupal-project
+├── Dockerfile
 ├── requirements.txt
-└── README.md
+├── entrypoint.sh
+├── utils.py
+├── agent.py
+├── api.py
+└── app.py
+```
+ 
+---
+ 
+## 2. Build the Docker Image
+ 
+Open your terminal, navigate to your project folder, and run the following command to build the image, tagged as `docupal-agent`:
+ 
+```bash
+docker build -t docupal-agent .
+```
+ 
+> **Note:** Don't forget the period `.` at the end — it tells Docker to look in the current directory.
+ 
+---
+ 
+## 3. Run the Container
+ 
+Once the build finishes, start the container. This maps all three ports (FastAPI, Streamlit, and Ollama) to your local machine:
+ 
+```bash
+docker run -d -p 8000:8000 -p 8501:8501 -p 11434:11434 --name docupal-running docupal-agent
+```
+ 
+---
+ 
+## 4. Monitor the Startup Process
+ 
+> ⚠️ **Important:** The `entrypoint.sh` script downloads `llama3.2` and `nomic-embed-text` on container start. The app will **not** be instantly available.
+ 
+Watch the logs to track model downloads and server startup:
+ 
+```bash
+docker logs -f docupal-running
+```
+ 
+Wait until you see the **Uvicorn (FastAPI)** and **Streamlit** startup success messages in the terminal. Press `Ctrl+C` to exit the log view once ready.
+ 
+---
+ 
+## 5. Access Your Application
+ 
+Once fully booted, open the following in your browser:
+ 
+| Layer | URL | Description |
+|---|---|---|
+| Streamlit Frontend | http://localhost:8501 | The main user interface |
+| FastAPI Backend | http://localhost:8000/docs | Auto-generated Swagger UI for testing endpoints |
+ 
+---
+ 
+## Useful Commands
+ 
+### Stop the application
+```bash
+docker stop docupal-running
+```
+ 
+### Rebuild after code changes
+```bash
+docker rm docupal-running
+docker build -t docupal-agent .
+docker run -d -p 8000:8000 -p 8501:8501 -p 11434:11434 --name docupal-running docupal-agent
 ```
 
-## 📌 Future Improvements
-- Multi-file support
+### Delete the container:
+This deletes the container and the heavy LLM weights stored inside it.
+```bash
+docker rm docupal-running
+```
 
-- Summary generation
+### Delete the image you built:
+This removes the docupal-agent image from your system.
 
-- UI themes & dark mode
+```bash
+docker rmi docupal-agent
+```
 
-- Model selection toggle (Mistral, Phi-3, Llama3, etc.)
+### The "Deep Clean" (Highly Recommended):
+Docker caches a lot of intermediate build layers and dangling images. To wipe all unused containers, networks, images (including the base ollama/ollama image if no other containers are using it), and build cache, run a system prune:
 
-- Live citation highlighting
-
-- File upload history per session
-
-## 💬 Feedback & Contributions
-Have ideas or found bugs? Feel free to open an issue or pull request!
-
-
+```bash
+docker system prune -a --volumes
+```
 
