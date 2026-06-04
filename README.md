@@ -6,6 +6,10 @@
 
 ---
 
+## Graph
+
+![Graph](static/graph.png)
+
 ## 🚀 Features
 
 - 📝 Upload any PDF
